@@ -7,6 +7,16 @@ const getPayloadWithValidFieldsOnly = (validFields, payload) =>
     {}
   );
 
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+
+    return res.json(users);
+  } catch ({ message = " Something went wrong " }) {
+    return res.status(500).json({ message });
+  }
+};
+
 const getUserById = async (req, res) => {
   try {
     const { id } = req.body;
@@ -21,6 +31,27 @@ const getUserById = async (req, res) => {
   }
 };
 
+const createUser = async (req, res) => {
+  try {
+    const payload = getPayloadWithValidFieldsOnly(
+      ["username", "email", "password"],
+      req.body
+    );
+
+    if (Object.keys(payload).length !== 3) {
+      return res
+        .status(400)
+        .json({ message: "Please provide a valid request" });
+    }
+
+    await User.create(payload);
+
+    return res.json({ message: "Successfully created user" });
+  } catch ({ message = " Something went wrong " }) {
+    return res.status(500).json({ message });
+  }
+};
+
 const updateUserById = async (req, res) => {
   try {
     const payload = getPayloadWithValidFieldsOnly(
@@ -28,8 +59,9 @@ const updateUserById = async (req, res) => {
       req.body
     );
     if (!Object.keys(payload).length) {
-      return resizeBy.status(400)
-      .json({ message: 'Please provide a valid request'});
+      return res
+        .status(400)
+        .json({ message: "Please provide a valid request" });
     }
     const { id } = req.body;
     const user = await User.update(req.body, { where: { id } });
@@ -60,4 +92,6 @@ module.exports = {
   getUserById,
   updateUserById,
   deleteUserById,
+  getUsers,
+  createUser,
 };

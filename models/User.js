@@ -1,7 +1,7 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../config/connection");
 
-require('dotenv').config();
+require("dotenv").config();
 
 class User extends Model {}
 
@@ -13,23 +13,33 @@ const schema = {
   },
   username: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: { isAlphanumeric: true },
+    unique: true,
   },
   email: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: { isEmail: true },
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      len: [8]
+    },
   },
-}
+};
 
 const options = {
   sequelize,
   timestamps: false,
   freezeTableName: true,
   underscored: true,
-  modelName: 'user',
-}
+  modelName: "user",
+};
 
-User.init( schema, options );
+User.init(schema, options);
 
 module.exports = User;
