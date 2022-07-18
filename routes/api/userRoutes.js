@@ -1,5 +1,9 @@
-const router = require("express").Router();
+const { Router } = require("express");
 const User = require("../../models/User");
+
+require('dotenv').config();
+
+const router = Router();
 
 router.get("/:id", async (req, res) => {
   try {
