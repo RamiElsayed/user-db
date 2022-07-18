@@ -1,6 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 
+require('dotenv').config();
+
 class User extends Model {}
 
 const schema = {

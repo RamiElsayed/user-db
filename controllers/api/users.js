@@ -1,4 +1,11 @@
-const User = require('../../models/User')
+const User = require("../../models/User");
+
+const getPayloadWithValidFieldsOnly = (validFields, payload) =>
+  Object.entries(payload).reduce(
+    (acc, [key, value]) =>
+      validFields.includes(key) ? { ...acc, [key]: value } : acc,
+    {}
+  );
 
 const getUserById = async (req, res) => {
   try {
@@ -16,6 +23,14 @@ const getUserById = async (req, res) => {
 
 const updateUserById = async (req, res) => {
   try {
+    const payload = getPayloadWithValidFieldsOnly(
+      ["username", "email", "password"],
+      req.body
+    );
+    if (!Object.keys(payload).length) {
+      return resizeBy.status(400)
+      .json({ message: 'Please provide a valid request'});
+    }
     const { id } = req.body;
     const user = await User.update(req.body, { where: { id } });
     if (!user[0]) {
